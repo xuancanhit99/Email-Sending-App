@@ -60,7 +60,7 @@ def send_email(to_addr, subject, body):
     # SMTP server configuration
     smtp_server = 'smtp.gmail.com'
     smtp_user = 'xuancanhit99@gmail.com'
-    smtp_password = ''
+    smtp_password = 'kpmyefhtgsfmizjv'
 
     # Create message
     msg = MIMEMultipart()
