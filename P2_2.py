@@ -1,31 +1,31 @@
-# import csv
-# import time
-# from datetime import datetime
-#
-# # 1
-# with open('r_200.csv', 'w', newline='') as file:
-#     writer = csv.writer(file)
-#     writer.writerow(["№", "Секунда", "Микросекунда"])
-#
-#     for i in range(1, 201):
-#         now = datetime.now()
-#         writer.writerow([i, now.second, now.microsecond])
-#         time.sleep(0.02)
+import csv
+import time
+from datetime import datetime
 
-# # 2
-# import os
-#
-#
-# def print_directory_contents(path):
-#     for dirpath, dirnames, filenames in os.walk(path):
-#         print(f'Opening directory: {dirpath}')
-#         for filename in filenames:
-#             print(filename)
-#
-#
-# # Replace 'your_directory_path' with the path of the directory you want to print
-# print_directory_contents("C:\\Users\\daota\\Documents")
-# print("--------------------------------------------------------")
+# 1
+with open('r_200.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["№", "Секунда", "Микросекунда"])
+
+    for i in range(1, 201):
+        now = datetime.now()
+        writer.writerow([i, now.second, now.microsecond])
+        time.sleep(0.02)
+
+# 2
+import os
+
+
+def print_directory_contents(path):
+    for dirpath, dirnames, filenames in os.walk(path):
+        print(f'Opening directory: {dirpath}')
+        for filename in filenames:
+            print(filename)
+
+
+# Replace 'your_directory_path' with the path of the directory you want to print
+print_directory_contents("C:\\Users\\daota\\Documents")
+print("--------------------------------------------------------")
 
 
 # 3
@@ -38,7 +38,6 @@ def print_words_by_length(filename):
         print(word)
 
 
-# Replace 'text.txt' with the path to your file
 print_words_by_length('text.txt')
 print("--------------------------------------------------------")
 

@@ -48,40 +48,40 @@
 # print(checker.is_triangle())  # Outputs: Ура, можно построить треугольник!
 # print("--------------------------------------------------------")
 
-
-# 3
-class Raboch:
-    cnt = 0
-
-    def __init__(self, name, vozrast):
-        self.name = name
-        self.vozrast = vozrast
-        Raboch.cnt += 1
-
-    @classmethod
-    def display_count(cls):
-        print(f"Количество рабочих: {cls.cnt}")
-
-    def display_raboch(self):
-        print(f"Рабочий: {self.name}, Возраст: {self.vozrast}")
-
-
-class Deti:
-    def __init__(self, name, vozrast):
-        self.name = name
-        self.vozrast = vozrast
-
-    def school(self):
-        return "Школа №1"
-
-
-raboch1 = Raboch("Иван", 35)
-raboch1.display_raboch()
-Raboch.display_count()
-
-deti1 = Deti("Маша", 7)
-print(f"Ребенок: {deti1.name}, Возраст: {deti1.vozrast}, Школа: {deti1.school()}")
-print("--------------------------------------------------------")
+#
+# # 3
+# class Raboch:
+#     cnt = 0
+#
+#     def __init__(self, name, vozrast):
+#         self.name = name
+#         self.vozrast = vozrast
+#         Raboch.cnt += 1
+#
+#     @classmethod
+#     def display_count(cls):
+#         print(f"Количество рабочих: {cls.cnt}")
+#
+#     def display_raboch(self):
+#         print(f"Рабочий: {self.name}, Возраст: {self.vozrast}")
+#
+#
+# class Deti:
+#     def __init__(self, name, vozrast):
+#         self.name = name
+#         self.vozrast = vozrast
+#
+#     def school(self):
+#         return "Школа №1"
+#
+#
+# raboch1 = Raboch("Иван", 35)
+# raboch1.display_raboch()
+# Raboch.display_count()
+#
+# deti1 = Deti("Маша", 7)
+# print(f"Ребенок: {deti1.name}, Возраст: {deti1.vozrast}, Школа: {deti1.school()}")
+# print("--------------------------------------------------------")
 
 
 class KgToLb:

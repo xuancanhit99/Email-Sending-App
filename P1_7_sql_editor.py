@@ -1,92 +1,105 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QTextEdit
 import sqlite3
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QTextEdit, QFileDialog, QLabel
 
 
-class DatabaseApp(QMainWindow):
+class SQLiteManager(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Create the text editor and buttons
-        self.text_edit = QTextEdit()
-        self.connect_button = QPushButton('Connect to DB')
-        self.query_button = QPushButton('Execute Query')
+        self.conn = None
+        self.initUI()
 
-        # Connect the buttons to their respective functions
-        self.connect_button.clicked.connect(self.connect_db)
-        self.query_button.clicked.connect(self.execute_query)
+    def initUI(self):
+        # This method initializes the user interface of the SQLiteManager application.
+        self.setWindowTitle('SQLite Database Manager')
+        self.setGeometry(100, 100, 800, 600)  # Set initial size
 
-        # Create the layout and add the widgets
         layout = QVBoxLayout()
-        layout.addWidget(self.connect_button)
-        layout.addWidget(self.query_button)
-        layout.addWidget(self.text_edit)
 
-        # Set the layout in a container and set it as the central widget
-        container = QWidget()
-        container.setLayout(layout)
-        self.setCentralWidget(container)
+        # Button to open a database file
+        self.btn_open = QPushButton('Open SQLite File', self)
+        self.btn_open.clicked.connect(self.open_file_dialog)
+        layout.addWidget(self.btn_open)
 
-        # Set the initial size of the window
-        self.resize(800, 600)
+        # Label for connection status
+        self.connection_status = QLabel('No database connected', self)
+        layout.addWidget(self.connection_status)
 
-        self.db_connection = None
-        self.cursor = None
+        # Text Edit for SQL Command
+        self.sql_command = QTextEdit(self)
+        self.sql_command.setPlaceholderText('Enter your SQL command here...')
+        layout.addWidget(self.sql_command)
 
-    def connect_db(self):
-        db_file, _ = QFileDialog.getOpenFileName(self, 'Open DB File')
-        if db_file:
-            self.db_connection = sqlite3.connect(db_file)
-            self.cursor = self.db_connection.cursor()
-            self.text_edit.append('Connected to database: {}'.format(db_file))
+        # Button to Execute Command
+        self.btn_execute = QPushButton('Execute Command', self)
+        self.btn_execute.clicked.connect(self.execute_command)
+        layout.addWidget(self.btn_execute)
 
-    def execute_query(self):
-        query = self.text_edit.toPlainText()
-        if query and self.cursor:
-            try:
-                self.cursor.execute(query)
-                self.db_connection.commit()
-                self.text_edit.append('Query executed successfully')
-            except Exception as e:
-                self.text_edit.append('Failed to execute query: {}'.format(str(e)))
+        # Text Edit for Result
+        self.result_text = QTextEdit(self)
+        self.result_text.setReadOnly(True)
+        layout.addWidget(self.result_text)
+
+        # Setting the central widget
+        central_widget = QWidget()
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
+
+    def open_file_dialog(self):
+        # This method opens a file dialog for the user to select a SQLite database file to connect to.
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_name, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
+                                                   "SQLite Files (*.sqlite);;All Files (*)", options=options)
+        if file_name:
+            self.connect_to_database(file_name)
+            self.connection_status.setText(f'Connected to database: {file_name}')
+
+    def connect_to_database(self, db_path):
+        # This method establishes a connection to the SQLite database at the specified path.
+        try:
+            self.conn = sqlite3.connect(db_path)
+            self.result_text.setText("Connected to the database successfully.")
+        except Exception as e:
+            self.result_text.setText("Error: " + str(e))
+
+    def execute_command(self):
+        # This method executes the SQL command entered by the user in the sql_command text edit field.
+        command = self.sql_command.toPlainText()
+        if command.lower() == "clear":
+            self.result_text.clear()
+        elif command.lower().startswith("select"):
+            self.run_query(command)
+        else:
+            self.run_action(command)
+
+    def run_query(self, query):
+        # This method executes a SQL query and displays the results in the result_text text edit field.
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute(query)
+            results = cursor.fetchall()
+            self.result_text.append("\nResults:")
+            for row in results:
+                self.result_text.append(str(row))
+        except Exception as e:
+            self.result_text.append("Error: " + str(e))
+
+    def run_action(self, action):
+        # This method executes a SQL action (non-query command) and displays the result in the result_text text edit f
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute(action)
+            self.conn.commit()
+            self.result_text.append("Action executed successfully.")
+        except Exception as e:
+            self.result_text.append("Error: " + str(e))
+
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    db_app = DatabaseApp()
-    db_app.show()
+    ex = SQLiteManager()
+    ex.show()
     sys.exit(app.exec_())
-
-
-#
-# import sqlite3
-#
-# # Tạo kết nối tới cơ sở dữ liệu SQLite
-# connection = sqlite3.connect('example.db')
-# cursor = connection.cursor()
-#
-# # Tạo bảng
-# cursor.execute('''
-# CREATE TABLE IF NOT EXISTS users (
-#     id INTEGER PRIMARY KEY AUTOINCREMENT,
-#     name TEXT NOT NULL,
-#     email TEXT NOT NULL UNIQUE
-# )
-# ''')
-#
-# # Chèn một số bản ghi
-# users = [
-#     ('Alice', 'alice@example.com'),
-#     ('Bob', 'bob@example.com'),
-#     ('Charlie', 'charlie@example.com')
-# ]
-#
-# cursor.executemany('INSERT INTO users (name, email) VALUES (?, ?)', users)
-#
-# # Lưu các thay đổi
-# connection.commit()
-#
-# # Đóng kết nối
-# connection.close()
-#
-# print("Database and table created, data inserted successfully.")
